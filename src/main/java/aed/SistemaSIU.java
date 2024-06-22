@@ -1,6 +1,7 @@
 package aed;
 
 public class SistemaSIU {
+    DictEstudiantes estudiantes = new DictEstudiantes();
 
     enum CargoDocente{
         AY2,
@@ -14,7 +15,7 @@ public class SistemaSIU {
     }
 
     public void inscribir(String estudiante, String carrera, String materia){
-        throw new UnsupportedOperationException("Método no implementado aún");
+        estudiantes.inscribirMateria(estudiante,materia);
     }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
@@ -46,6 +47,6 @@ public class SistemaSIU {
     }
 
     public int materiasInscriptas(String estudiante){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return estudiantes.getMaterias(estudiante).size();
     }
 }

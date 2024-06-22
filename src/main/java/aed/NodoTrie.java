@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class NodoTrie {
 
-    private boolean finPalabra;
-    private NodoTrie[] siguienteLetras; 
+    public boolean finPalabra;
+    public NodoTrie[] siguienteLetras;
     private Character letraActual; 
 
     public NodoTrie() {
