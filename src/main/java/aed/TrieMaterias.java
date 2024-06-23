@@ -3,6 +3,8 @@ package aed;
 import java.util.ArrayList;
 import java.util.List;
 
+import aed.SistemaSIU.CargoDocente;
+
 public class TrieMaterias {
     public NodoTrieMaterias raiz;
 
@@ -40,24 +42,31 @@ public class TrieMaterias {
         nodo.estudiantes.add(estudiante);
     }
 
-    public void agregaDocente(String materia, String docente){
+    public void agregaDocente(String materia, CargoDocente docente){
         NodoTrieMaterias nodo = ultimoNodoMateria(materia);
-        if (docente.equals("PROFE")){
-            nodo.docentes[1] += 1;
+        if (docente == CargoDocente.PROF){
+            nodo.docentes[0] += 1;
             nodo.cupo += 250;
-        } else if (docente.equals("JTP")){
-            nodo.docentes[2] += 1;
+        } 
+        else if (docente == CargoDocente.JTP){
+            nodo.docentes[1] += 1;
             nodo.cupo += 100;
-        } else if (docente.equals("AY1")){
-            nodo.docentes[3] += 1;
+        } else if (docente == CargoDocente.AY1){
+            nodo.docentes[2] += 1;
             nodo.cupo += 20;
         } else {
-            nodo.docentes[4] += 1;
+            nodo.docentes[3] += 1;
             nodo.cupo += 30;
         }
     }
 
-    public List<String> extraerMaterias(NodoTrieMaterias nodo, StringBuilder materiaActual, List<String> materias) {
+    public String[] extraerMaterias() {
+        List<String> materia = new ArrayList<>();
+        extraerMaterias(raiz, new StringBuilder(), materia);
+        return materia.toArray(new String[0]);
+    }
+
+    private void extraerMaterias(NodoTrieMaterias nodo, StringBuilder materiaActual, List<String> materias) {
         if (nodo.isFinPalabra()) {
             materias.add(materiaActual.toString());
         }
@@ -69,7 +78,6 @@ public class TrieMaterias {
                 materiaActual.deleteCharAt(materiaActual.length() - 1);
             }
         }
-        return materias;
     }
 
 }
