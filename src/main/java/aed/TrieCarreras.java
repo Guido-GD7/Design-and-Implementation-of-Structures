@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrieCarreras {
-    
+
     private NodoTrie raiz;
 
     public TrieCarreras() {
         this.raiz = new NodoTrie();
     }
 
-    public void insertar(String palabra) {
+    public void agregarCarrera(String carrera) {
         NodoTrie nodo = raiz;
-        for (char c : palabra.toCharArray()) {
+        for (char c : carrera.toCharArray()) {
             int index = c;
             if (nodo.getSiguienteLetras()[index] == null) {
                 NodoTrie nuevoNodo = new NodoTrie();
@@ -25,37 +25,44 @@ public class TrieCarreras {
         nodo.setFinPalabra(true);
     }
 
-    public List<String> extraerPalabras() {
-        List<String> palabras = new ArrayList<>();
-        extraerPalabras(raiz, new StringBuilder(), palabras);
-        return palabras;
+    public NodoTrie ultimoNodoCarrera(String carrera) {
+        NodoTrie nodo = raiz;
+        for (char c : carrera.toCharArray()) {
+            int index = c;
+            if (nodo.getSiguienteLetras()[index] != null) {
+                nodo = nodo.getSiguienteLetras()[index];
+            }
+        }
+        return nodo;
     }
 
-    private void extraerPalabras(NodoTrie nodo, StringBuilder palabraActual, List<String> palabras) {
+    public void agregaMateria(String carrera, String materia) {
+        NodoTrie nodo = ultimoNodoCarrera(carrera);
+        nodo.materias.agregarMateria(materia);
+    }
+
+    public void insribirEstudiante(String carrera, String materia, String estudiante) {
+        NodoTrie nodo = ultimoNodoCarrera(carrera);
+        nodo.materias.inscribirEstudiante(materia, estudiante);
+    }
+
+    public List<String> extrarCarreras(NodoTrie nodo, StringBuilder carreraActual, List<String> carreras) {
         if (nodo.isFinPalabra()) {
-            palabras.add(palabraActual.toString());
+            carreras.add(carreraActual.toString());
         }
 
         for (int i = 0; i < nodo.getSiguienteLetras().length; i++) {
             if (nodo.getSiguienteLetras()[i] != null) {
-                palabraActual.append(nodo.getSiguienteLetras()[i].getLetraActual());
-                extraerPalabras(nodo.getSiguienteLetras()[i], palabraActual, palabras);
-                palabraActual.deleteCharAt(palabraActual.length() - 1); 
+                carreraActual.append(nodo.getSiguienteLetras()[i].getLetraActual());
+                extrarCarreras(nodo.getSiguienteLetras()[i], carreraActual, carreras);
+                carreraActual.deleteCharAt(carreraActual.length() - 1);
             }
         }
+        return carreras;
     }
 
-    public static void main(String[] args) {
-        TrieCarreras trie = new TrieCarreras();
-        trie.insertar("Quimica Organica 1");
-        trie.insertar("Algoritmos2");
-        trie.insertar("Matematica");
-        trie.insertar("alamo");
-        trie.insertar("articulo");
-
-        List<String> palabras = trie.extraerPalabras();
-        for (String palabra : palabras) {
-            System.out.println(palabra);
-        }
+    public List<String> listaMaterias (String carrera) {
+        NodoTrie nodo = ultimoNodoCarrera(carrera);
+        return nodo.materias.extraerMaterias(nodo.materias.raiz,new StringBuilder(),new ArrayList<>());
     }
 }

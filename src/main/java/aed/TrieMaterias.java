@@ -4,52 +4,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrieMaterias {
-
-    private List<CarreraTrie> carreras;
+    public NodoTrieMaterias raiz;
 
     public TrieMaterias() {
-        this.carreras = new ArrayList<>();
+        this.raiz = new NodoTrieMaterias();
     }
 
-    private CarreraTrie buscarCarrera(String carrera) {
-        for (CarreraTrie ct : carreras) {
-            if (ct.getCarrera().equals(carrera)) {
-                return ct;
-            }
-        }
-        return null;
-    }
-
-    public void insertarMateriaACarrera(ParCarreraMateria parCarreraMateria) {
-        CarreraTrie carreraRelacionada = buscarCarrera(parCarreraMateria.getCarrera());
-        if (carreraRelacionada == null) {
-            carreraRelacionada = new CarreraTrie(parCarreraMateria.getCarrera());
-            carreras.add(carreraRelacionada);
-        }
-
-        NodoTrie nodo = carreraRelacionada.getRaiz();
-        for (char c : parCarreraMateria.getNombreMateria().toCharArray()) {
-            int indice = c;
-            if (nodo.getSiguienteLetras()[indice] == null) {
-                NodoTrie nuevoNodo = new NodoTrie();
+    public void agregarMateria(String materia) {
+        NodoTrieMaterias nodo = raiz;
+        for (char c : materia.toCharArray()) {
+            int index = c;
+            if (nodo.getSiguienteLetras()[index] == null) {
+                NodoTrieMaterias nuevoNodo = new NodoTrieMaterias();
                 nuevoNodo.setLetraActual(c);
-                nodo.setSiguienteLetra(indice, nuevoNodo);
+                nodo.setSiguienteLetra(index, nuevoNodo);
             }
-            nodo = nodo.getSiguienteLetras()[indice];
+            nodo = nodo.getSiguienteLetras()[index];
         }
         nodo.setFinPalabra(true);
     }
 
-    public List<String> obtenerMaterias(String carrera) {
-        List<String> materias = new ArrayList<>();
-        CarreraTrie carreraTrie = buscarCarrera(carrera);
-        if (carreraTrie != null) {
-            extraerMaterias(carreraTrie.getRaiz(), new StringBuilder(), materias);
+    public NodoTrieMaterias ultimoNodoMateria(String materia) {
+        NodoTrieMaterias nodo = raiz;
+        for (char c : materia.toCharArray()) {
+            int index = c;
+            if (nodo.getSiguienteLetras()[index] != null) {
+                nodo = nodo.getSiguienteLetras()[index];
+            }
         }
-        return materias;
+        return nodo;
     }
 
-    private void extraerMaterias(NodoTrie nodo, StringBuilder materiaActual, List<String> materias) {
+    public void inscribirEstudiante (String materia, String estudiante){
+        NodoTrieMaterias nodo = ultimoNodoMateria(materia);
+        nodo.estudiantes.add(estudiante);
+    }
+
+    public void agregaDocente(String materia, String docente){
+        NodoTrieMaterias nodo = ultimoNodoMateria(materia);
+        if (docente.equals("PROFE")){
+            nodo.docentes[1] += 1;
+            nodo.cupo += 250;
+        } else if (docente.equals("JTP")){
+            nodo.docentes[2] += 1;
+            nodo.cupo += 100;
+        } else if (docente.equals("AY1")){
+            nodo.docentes[3] += 1;
+            nodo.cupo += 20;
+        } else {
+            nodo.docentes[4] += 1;
+            nodo.cupo += 30;
+        }
+    }
+
+    public List<String> extraerMaterias(NodoTrieMaterias nodo, StringBuilder materiaActual, List<String> materias) {
         if (nodo.isFinPalabra()) {
             materias.add(materiaActual.toString());
         }
@@ -61,29 +69,8 @@ public class TrieMaterias {
                 materiaActual.deleteCharAt(materiaActual.length() - 1);
             }
         }
+        return materias;
     }
 
-    public static void main(String[] args) {
-        TrieMaterias trieMaterias = new TrieMaterias();
-
-        trieMaterias.insertarMateriaACarrera(new ParCarreraMateria("Datos", "Orga1"));
-        trieMaterias.insertarMateriaACarrera(new ParCarreraMateria("Datos", "Algebra 1"));
-        trieMaterias.insertarMateriaACarrera(new ParCarreraMateria("Datos", "Matematica"));
-
-        trieMaterias.insertarMateriaACarrera(new ParCarreraMateria("Compu", "Matematica"));
-        trieMaterias.insertarMateriaACarrera(new ParCarreraMateria("Compu", "Algoritmos 2"));
-
-        List<String> materiasDatos = trieMaterias.obtenerMaterias("Datos");
-        System.out.println("Materias de Datos:");
-        for (String materia : materiasDatos) {
-            System.out.println(materia);
-        }
-
-        List<String> materiasCompu = trieMaterias.obtenerMaterias("Compu");
-        System.out.println("Materias de Compu:");
-        for (String materia : materiasCompu) {
-            System.out.println(materia);
-        }
-    }
 }
 

@@ -2,19 +2,26 @@ package aed;
 
 import java.util.ArrayList;
 
-public class NodoTrie {
-    public TrieMaterias materias;
+public class NodoTrieMaterias {
+
+    public int[] docentes; //[PROFE, JTP, AY1, AY2]
+    public int cupo;
+    public ArrayList<String> estudiantes;
+    public ArrayList<String> carreras;
 
     public boolean finPalabra;
-    public NodoTrie[] siguienteLetras;
+    public NodoTrieMaterias[] siguienteLetras;
     private Character letraActual;
 
-    public NodoTrie() {
-        this.materias = new TrieMaterias();
+    public NodoTrieMaterias() {
+        this.docentes = new int[4];
+        this.cupo = 0;
+        this.estudiantes = new ArrayList<String>();
+        this.carreras = new ArrayList<>();
 
         this.finPalabra = false;
-        this.letraActual = null; 
-        this.siguienteLetras = new NodoTrie[256]; 
+        this.letraActual = null;
+        this.siguienteLetras = new NodoTrieMaterias[256];
     }
 
     // Getters and setters if needed
@@ -26,11 +33,11 @@ public class NodoTrie {
         this.finPalabra = finPalabra;
     }
 
-    public NodoTrie[] getSiguienteLetras() {
+    public NodoTrieMaterias[] getSiguienteLetras() {
         return siguienteLetras;
     }
 
-    public void setSiguienteLetra(int index, NodoTrie nodo) {
+    public void setSiguienteLetra(int index, NodoTrieMaterias nodo) {
         this.siguienteLetras[index] = nodo;
     }
 
@@ -41,4 +48,5 @@ public class NodoTrie {
     public void setLetraActual(Character letraActual) {
         this.letraActual = letraActual;
     }
+
 }

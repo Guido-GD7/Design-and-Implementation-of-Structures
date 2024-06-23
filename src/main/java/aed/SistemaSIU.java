@@ -1,7 +1,7 @@
 package aed;
 
 public class SistemaSIU {
-    DictEstudiantes estudiantes = new DictEstudiantes();
+    DictEstudiantes estudiantes;
 
     enum CargoDocente{
         AY2,
@@ -15,6 +15,7 @@ public class SistemaSIU {
     }
 
     public void inscribir(String estudiante, String carrera, String materia){
+        //carrera.materias.inscribirEstudiante
         estudiantes.inscribirMateria(estudiante,materia);
     }
 
@@ -48,5 +49,10 @@ public class SistemaSIU {
 
     public int materiasInscriptas(String estudiante){
         return estudiantes.getMaterias(estudiante).size();
+
     }
 }
+
+
+            carrera1(materia1 - materia2)
+                --carrera2(materia1 - materia3)
