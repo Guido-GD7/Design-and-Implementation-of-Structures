@@ -3,9 +3,11 @@ package aed;
 import java.util.ArrayList;
 import java.util.List;
 
+import aed.SistemaSIU.CargoDocente;
+
 public class TrieCarreras {
 
-    private NodoTrie raiz;
+    public NodoTrie raiz;
 
     public TrieCarreras() {
         this.raiz = new NodoTrie();
@@ -41,12 +43,46 @@ public class TrieCarreras {
         nodo.materias.agregarMateria(materia);
     }
 
-    public void insribirEstudiante(String carrera, String materia, String estudiante) {
+    public void eliminarMateria(String carrera, String materia) {
+        NodoTrie nodo = ultimoNodoCarrera(carrera);
+        nodo.materias.eliminarMateria(materia);
+    }
+
+    public void inscribirEstudiante(String carrera, String materia, String estudiante) {
         NodoTrie nodo = ultimoNodoCarrera(carrera);
         nodo.materias.inscribirEstudiante(materia, estudiante);
     }
 
-    public List<String> extrarCarreras(NodoTrie nodo, StringBuilder carreraActual, List<String> carreras) {
+    public void agregaDocente(String carrera, String materia, CargoDocente docente) {
+        NodoTrie nodo = ultimoNodoCarrera(carrera);
+        nodo.materias.agregaDocente(materia, docente);
+    }
+
+    public int[] plantelDocente(String carrera, String materia) {
+        NodoTrie nodo = ultimoNodoCarrera(carrera);
+        NodoTrieMaterias materia1 = nodo.materias.ultimoNodoMateria(materia);
+        return materia1.docentes;
+    }
+
+    public int cantEstudiantes(String carrera, String materia) {
+        NodoTrie nodo = ultimoNodoCarrera(carrera);
+        NodoTrieMaterias materia1 = nodo.materias.ultimoNodoMateria(materia);
+        return materia1.estudiantes.size();
+    }
+
+    public int cupo(String carrera, String materia) {
+        NodoTrie nodo = ultimoNodoCarrera(carrera);
+        NodoTrieMaterias materia1 = nodo.materias.ultimoNodoMateria(materia);
+        return materia1.cupo;
+    }
+
+    public String[] extraerCarreras() {
+        List<String> carreras = new ArrayList<>();
+        extraerCarreras(raiz, new StringBuilder(), carreras);
+        return carreras.toArray(new String[0]);
+    }
+
+    private void extraerCarreras(NodoTrie nodo, StringBuilder carreraActual, List<String> carreras) {
         if (nodo.isFinPalabra()) {
             carreras.add(carreraActual.toString());
         }
@@ -54,15 +90,14 @@ public class TrieCarreras {
         for (int i = 0; i < nodo.getSiguienteLetras().length; i++) {
             if (nodo.getSiguienteLetras()[i] != null) {
                 carreraActual.append(nodo.getSiguienteLetras()[i].getLetraActual());
-                extrarCarreras(nodo.getSiguienteLetras()[i], carreraActual, carreras);
+                extraerCarreras(nodo.getSiguienteLetras()[i], carreraActual, carreras);
                 carreraActual.deleteCharAt(carreraActual.length() - 1);
             }
         }
-        return carreras;
     }
 
-    public List<String> listaMaterias (String carrera) {
+    public String[] listaMaterias (String carrera) {
         NodoTrie nodo = ultimoNodoCarrera(carrera);
-        return nodo.materias.extraerMaterias(nodo.materias.raiz,new StringBuilder(),new ArrayList<>());
+        return nodo.materias.extraerMaterias();
     }
 }

@@ -11,7 +11,7 @@ public class DictEstudiantes {
         this.raiz = new NodoDict[letras];
     }
 
-    private class NodoDict {
+    public class NodoDict {
         public NodoDict[] siguientes;
         public boolean finLibreta;
         public List<String> materias;
@@ -29,36 +29,30 @@ public class DictEstudiantes {
 
     //agrega materia a la lista de materias de la libreta
     public void inscribirMateria(String libreta, String materia) {
-        NodoDict[] actual = raiz;
-        for (char c : libreta.toCharArray()) {
-            int index = getIndex(c);
-            if (actual[index] == null) {
-                actual[index] = new NodoDict();
-            }
-            actual = actual[index].siguientes;
-        }
-        // Marcar fin de libreta y agregar materia
-        if (actual[letras - 1] == null) {
-            actual[letras - 1] = new NodoDict();
-            actual[letras - 1].materias = new ArrayList<>();
-        }
-        actual[letras - 1].finLibreta = true;
-        actual[letras - 1].materias.add(materia);
+        NodoDict nodo = getEstudiante(libreta);
+        nodo.materias.add(materia);
     }
 
-    public List<String> getMaterias(String libreta) {
-        NodoDict[] actual = this.raiz;
+    public void eliminarMateria(String libreta, String materia) {
+        NodoDict nodo = getEstudiante(libreta);
+        nodo.materias.remove(materia);
+    }
+
+    public NodoDict getEstudiante(String libreta) {
+        NodoDict[] nodo = raiz;
         for (char c : libreta.toCharArray()) {
             int index = getIndex(c);
-            if (actual[index] == null) {
-                return null; // No se encontró la libreta
+            if (nodo[index] == null) {
+                nodo[index] = new NodoDict();
             }
-            actual = actual[index].siguientes;
+            nodo = nodo[index].siguientes;
         }
-        if (actual[letras - 1] != null && actual[letras - 1].finLibreta) {
-            return actual[letras - 1].materias;
-        } else {
-            return null;
+        // Marcar fin de libreta y agregar materia
+        if (nodo[letras - 1] == null) {
+            nodo[letras - 1] = new NodoDict();
+            nodo[letras - 1].materias = new ArrayList<>();
         }
+        nodo[letras - 1].finLibreta = true;
+        return nodo[letras - 1];
     }
 }

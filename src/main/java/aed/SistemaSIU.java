@@ -1,7 +1,12 @@
 package aed;
 
+import java.util.ArrayList;
+
 public class SistemaSIU {
-    DictEstudiantes estudiantes;
+    private InfoMateria[] infoMaterias;
+    private TrieCarreras trieCarreras;
+    private DictEstudiantes dictEstudiantes;
+    private String[] libretasUniversitarias;
 
     enum CargoDocente{
         AY2,
@@ -11,48 +16,60 @@ public class SistemaSIU {
     }
 
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        this.infoMaterias = infoMaterias;
+        this.trieCarreras = new TrieCarreras();
+        this.dictEstudiantes = new DictEstudiantes();
+        this.libretasUniversitarias = libretasUniversitarias;
+
+        // Insertar materias en TrieMaterias
+        for (InfoMateria infoMateria : infoMaterias) {
+            for (ParCarreraMateria par : infoMateria.getParesCarreraMateria()) {
+                trieCarreras.agregarCarrera(par.getCarrera());
+                trieCarreras.agregaMateria(par.getCarrera(),par.getNombreMateria());
+            }
+        }
     }
 
     public void inscribir(String estudiante, String carrera, String materia){
         //carrera.materias.inscribirEstudiante
-        estudiantes.inscribirMateria(estudiante,materia);
+        trieCarreras.inscribirEstudiante(carrera,materia,estudiante);
+        dictEstudiantes.inscribirMateria(estudiante,materia);
     }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        trieCarreras.agregaDocente(carrera,materia,cargo);
     }
 
     public int[] plantelDocente(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return trieCarreras.plantelDocente(carrera, materia);
     }
 
     public void cerrarMateria(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        ArrayList<String> estudiantes = trieCarreras.ultimoNodoCarrera(carrera).materias.ultimoNodoMateria(materia).estudiantes;
+        trieCarreras.eliminarMateria(materia,carrera);
+        //Eliminamos la materia del dict estudiantes
+        for (String estudiante : estudiantes){
+            dictEstudiantes.eliminarMateria(estudiante,materia);
+        }
     }
 
     public int inscriptos(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return trieCarreras.cantEstudiantes(carrera,materia);
     }
 
     public boolean excedeCupo(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return trieCarreras.cupo(carrera,materia) < trieCarreras.cantEstudiantes(carrera, materia);
     }
 
     public String[] carreras(){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return trieCarreras.extraerCarreras();
     }
 
     public String[] materias(String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return trieCarreras.listaMaterias(carrera);
     }
 
     public int materiasInscriptas(String estudiante){
-        return estudiantes.getMaterias(estudiante).size();
-
+        return dictEstudiantes.getEstudiante(estudiante).materias.size();
     }
 }
-
-
-            carrera1(materia1 - materia2)
-                --carrera2(materia1 - materia3)
