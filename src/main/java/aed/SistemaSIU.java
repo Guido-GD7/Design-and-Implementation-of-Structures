@@ -27,31 +27,31 @@ public class SistemaSIU {
                 if (! trieCarreras.existe(parCarreraMateria.carrera)){
                     trieCarreras.agregar(parCarreraMateria.carrera, new Carrera(parCarreraMateria.carrera));
                 }
-                NodoTrie<Carrera> nodoCarrera = trieCarreras.ultimoNodo(parCarreraMateria.carrera);
-                nodoCarrera.informacion.materias.agregar(parCarreraMateria.nombreMateria, nodoMateria);
-                nodoMateria.carreras.add(nodoCarrera.informacion);
+                Carrera nodoCarrera = trieCarreras.getInformacion(parCarreraMateria.carrera);
+                nodoCarrera.materias.agregar(parCarreraMateria.nombreMateria, nodoMateria);
+                nodoMateria.carreras.add(nodoCarrera);
             }
         }
     }
 
     public void inscribir(String estudiante, String carrera, String materia){
-        Materia nodoMateria = trieCarreras.ultimoNodo(carrera).informacion.materias.ultimoNodo(materia).informacion;
+        Materia nodoMateria = trieCarreras.getInformacion(carrera).materias.getInformacion(materia);
         nodoMateria.inscribirEstudiante(estudiante);
         dictEstudiantes.inscribirMateria(estudiante, nodoMateria);
     }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
-        Materia nodoMateria = trieCarreras.ultimoNodo(carrera).informacion.materias.ultimoNodo(materia).informacion;
+        Materia nodoMateria = trieCarreras.getInformacion(carrera).materias.getInformacion(materia);
         nodoMateria.agregarDocente(cargo);
     }
 
     public int[] plantelDocente(String materia, String carrera){
-        Materia nodoMateria = trieCarreras.ultimoNodo(carrera).informacion.materias.ultimoNodo(materia).informacion;
+        Materia nodoMateria = trieCarreras.getInformacion(carrera).materias.getInformacion(materia);
         return nodoMateria.docentes;
     }
 
     public void cerrarMateria(String materia, String carrera){
-        Materia nodoMateria = trieCarreras.ultimoNodo(carrera).informacion.materias.ultimoNodo(materia).informacion;
+        Materia nodoMateria = trieCarreras.getInformacion(carrera).materias.getInformacion(materia);
         ArrayList<Carrera> carreras = nodoMateria.carreras;
         InfoMateria infoMateria = nodoMateria.infoMateria;
         ArrayList<String> estudiantes = nodoMateria.estudiantes;
@@ -69,15 +69,13 @@ public class SistemaSIU {
     }
 
     public int inscriptos(String materia, String carrera){
-        Carrera nodoCarrera = trieCarreras.ultimoNodo(carrera).informacion;
-        return nodoCarrera.materias.ultimoNodo(materia).informacion.estudiantes.size();
+        Carrera nodoCarrera = trieCarreras.getInformacion(carrera);
+        return nodoCarrera.materias.getInformacion(materia).estudiantes.size();
     }
 
     public boolean excedeCupo(String materia, String carrera){
-        Carrera nodoCarrera = trieCarreras.ultimoNodo(carrera).informacion;
-        int cupo = nodoCarrera.materias.ultimoNodo(materia).informacion.cupo;
-        System.out.println(cupo);
-        System.out.println(inscriptos(materia,carrera));
+        Carrera nodoCarrera = trieCarreras.getInformacion(carrera);
+        int cupo = nodoCarrera.materias.getInformacion(materia).cupo;
         return inscriptos(materia, carrera) > cupo;
     }
 
@@ -86,7 +84,7 @@ public class SistemaSIU {
     }
 
     public String[] materias(String carrera){
-        return trieCarreras.ultimoNodo(carrera).informacion.materias.extraer();
+        return trieCarreras.getInformacion(carrera).materias.extraer();
     }
 
     public int materiasInscriptas(String estudiante){

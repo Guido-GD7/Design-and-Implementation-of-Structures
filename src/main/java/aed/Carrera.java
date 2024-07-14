@@ -16,8 +16,7 @@ public class Carrera {
     }
 
     public void inscribirEstudiante(String materia, String libreta) {
-        NodoTrie<Materia> nodo = this.materias.ultimoNodo(materia);
-        nodo.informacion.inscribirEstudiante(libreta);
+        this.materias.getInformacion(materia).inscribirEstudiante(libreta);
     }
 
     public void eliminarMateria(String materia) {
@@ -25,12 +24,11 @@ public class Carrera {
     }
 
     public void agregarDocente(String materia, SistemaSIU.CargoDocente docente) {
-        NodoTrie<Materia> nodo = this.materias.ultimoNodo(materia);
-        nodo.informacion.agregarDocente(docente);
+        this.materias.getInformacion(materia).agregarDocente(docente);
     }
 
     public int getCupo(String materia) {
-        return this.materias.ultimoNodo(materia).informacion.cupo;
+        return this.materias.getInformacion(materia).cupo;
     }
 
 }

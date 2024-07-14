@@ -6,12 +6,51 @@ import java.util.List;
 import aed.SistemaSIU.CargoDocente;
 
 public class Trie<T> {
-
     public NodoTrie<T> raiz;
-    public T informacion;
 
     public Trie() {
         this.raiz = new NodoTrie<>();
+    }
+
+    private class NodoTrie<T> {
+
+        public boolean finPalabra;
+        public NodoTrie<T>[] siguienteLetras;
+        private Character letraActual;
+        public T informacion;
+
+        public NodoTrie() {
+
+            this.finPalabra = false;
+            this.letraActual = null;
+            this.siguienteLetras = (NodoTrie<T>[]) new NodoTrie[256];
+            this.informacion = null;
+        }
+
+        public boolean esFinPalabra() {
+            return finPalabra;
+        }
+
+        public void setFinPalabra(boolean finPalabra) {
+            this.finPalabra = finPalabra;
+        }
+
+        public NodoTrie<T>[] getSiguienteLetras() {
+            return siguienteLetras;
+        }
+
+        public void setSiguienteLetra(int index, NodoTrie nodo) {
+            this.siguienteLetras[index] = nodo;
+        }
+
+        public Character getLetraActual() {
+            return letraActual;
+        }
+
+        public void setLetraActual(Character letraActual) {
+            this.letraActual = letraActual;
+        }
+
     }
 
     public void agregar(String palabra, T info) {
@@ -107,4 +146,7 @@ public class Trie<T> {
         return true;
     }
 
+    public T getInformacion(String palabra) {
+        return this.ultimoNodo(palabra).informacion;
+    }
 }
