@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class SistemaSIU {
     private InfoMateria[] infoMaterias;
-    private TrieCarreras trieCarreras;
+    private Trie<Carrera> trieCarreras;
     private DictEstudiantes dictEstudiantes;
     private String[] libretasUniversitarias;
 
@@ -17,56 +17,76 @@ public class SistemaSIU {
 
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias){
         this.infoMaterias = infoMaterias;
-        this.trieCarreras = new TrieCarreras();
+        this.trieCarreras = new Trie<Carrera>();
         this.dictEstudiantes = new DictEstudiantes();
         this.libretasUniversitarias = libretasUniversitarias;
 
-        // Insertar materias en TrieMaterias
-        for (InfoMateria infoMateria : infoMaterias) {
-            for (ParCarreraMateria par : infoMateria.getParesCarreraMateria()) {
-                trieCarreras.agregarCarrera(par.getCarrera());
-                trieCarreras.agregaMateria(par.getCarrera(),par.getNombreMateria());
+        for (InfoMateria materia : infoMaterias){
+            Materia nodoMateria = new Materia(materia);
+            for (ParCarreraMateria parCarreraMateria : materia.getParesCarreraMateria()){
+                if (! trieCarreras.existe(parCarreraMateria.carrera)){
+                    trieCarreras.agregar(parCarreraMateria.carrera, new Carrera(parCarreraMateria.carrera));
+                }
+                NodoTrie<Carrera> nodoCarrera = trieCarreras.ultimoNodo(parCarreraMateria.carrera);
+                nodoCarrera.informacion.materias.agregar(parCarreraMateria.nombreMateria, nodoMateria);
+                nodoMateria.carreras.add(nodoCarrera.informacion);
             }
         }
     }
 
     public void inscribir(String estudiante, String carrera, String materia){
-        //carrera.materias.inscribirEstudiante
-        trieCarreras.inscribirEstudiante(carrera,materia,estudiante);
-        dictEstudiantes.inscribirMateria(estudiante,materia);
+        Materia nodoMateria = trieCarreras.ultimoNodo(carrera).informacion.materias.ultimoNodo(materia).informacion;
+        nodoMateria.inscribirEstudiante(estudiante);
+        dictEstudiantes.inscribirMateria(estudiante, nodoMateria);
     }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
-        trieCarreras.agregaDocente(carrera,materia,cargo);
+        Materia nodoMateria = trieCarreras.ultimoNodo(carrera).informacion.materias.ultimoNodo(materia).informacion;
+        nodoMateria.agregarDocente(cargo);
     }
 
     public int[] plantelDocente(String materia, String carrera){
-        return trieCarreras.plantelDocente(carrera, materia);
+        Materia nodoMateria = trieCarreras.ultimoNodo(carrera).informacion.materias.ultimoNodo(materia).informacion;
+        return nodoMateria.docentes;
     }
 
     public void cerrarMateria(String materia, String carrera){
-        ArrayList<String> estudiantes = trieCarreras.ultimoNodoCarrera(carrera).materias.ultimoNodoMateria(materia).estudiantes;
-        trieCarreras.eliminarMateria(materia,carrera);
-        //Eliminamos la materia del dict estudiantes
-        for (String estudiante : estudiantes){
-            dictEstudiantes.eliminarMateria(estudiante,materia);
+        Materia nodoMateria = trieCarreras.ultimoNodo(carrera).informacion.materias.ultimoNodo(materia).informacion;
+        ArrayList<Carrera> carreras = nodoMateria.carreras;
+        InfoMateria infoMateria = nodoMateria.infoMateria;
+        ArrayList<String> estudiantes = nodoMateria.estudiantes;
+
+        for (ParCarreraMateria parCarreraMateria : infoMateria.getParesCarreraMateria()){
+            for (Carrera nodoCarrera : carreras){
+                if (nodoCarrera.nombre.equals(parCarreraMateria.carrera)){
+                    nodoCarrera.materias.eliminar(parCarreraMateria.nombreMateria);
+                }
+            }
+        }
+        for (String libreta : nodoMateria.estudiantes){
+            dictEstudiantes.eliminarMateria(libreta,nodoMateria);
         }
     }
 
     public int inscriptos(String materia, String carrera){
-        return trieCarreras.cantEstudiantes(carrera,materia);
+        Carrera nodoCarrera = trieCarreras.ultimoNodo(carrera).informacion;
+        return nodoCarrera.materias.ultimoNodo(materia).informacion.estudiantes.size();
     }
 
     public boolean excedeCupo(String materia, String carrera){
-        return trieCarreras.cupo(carrera,materia) < trieCarreras.cantEstudiantes(carrera, materia);
+        Carrera nodoCarrera = trieCarreras.ultimoNodo(carrera).informacion;
+        int cupo = nodoCarrera.materias.ultimoNodo(materia).informacion.cupo;
+        System.out.println(cupo);
+        System.out.println(inscriptos(materia,carrera));
+        return inscriptos(materia, carrera) > cupo;
     }
 
     public String[] carreras(){
-        return trieCarreras.extraerCarreras();
+        return trieCarreras.extraer();
     }
 
     public String[] materias(String carrera){
-        return trieCarreras.listaMaterias(carrera);
+        return trieCarreras.ultimoNodo(carrera).informacion.materias.extraer();
     }
 
     public int materiasInscriptas(String estudiante){

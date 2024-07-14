@@ -2,23 +2,23 @@ package aed;
 
 import java.util.ArrayList;
 
-public class NodoTrie {
-    public TrieMaterias materias;
+//Nodos del trie Carreras
+public class NodoTrie<T> {
 
     public boolean finPalabra;
-    public NodoTrie[] siguienteLetras;
+    public NodoTrie<T>[] siguienteLetras;
     private Character letraActual;
+    public T informacion;
 
     public NodoTrie() {
-        this.materias = new TrieMaterias();
 
         this.finPalabra = false;
         this.letraActual = null; 
-        this.siguienteLetras = new NodoTrie[256]; 
+        this.siguienteLetras = (NodoTrie<T>[]) new NodoTrie[256];
+        this.informacion = null;
     }
 
-    // Getters and setters if needed
-    public boolean isFinPalabra() {
+    public boolean esFinPalabra() {
         return finPalabra;
     }
 
@@ -26,7 +26,7 @@ public class NodoTrie {
         this.finPalabra = finPalabra;
     }
 
-    public NodoTrie[] getSiguienteLetras() {
+    public NodoTrie<T>[] getSiguienteLetras() {
         return siguienteLetras;
     }
 

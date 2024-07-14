@@ -14,7 +14,7 @@ public class DictEstudiantes {
     public class NodoDict {
         public NodoDict[] siguientes;
         public boolean finLibreta;
-        public List<String> materias;
+        public List<Materia> materias;
 
         public NodoDict() {
             this.siguientes = new NodoDict[letras];
@@ -28,12 +28,12 @@ public class DictEstudiantes {
     }
 
     //agrega materia a la lista de materias de la libreta
-    public void inscribirMateria(String libreta, String materia) {
+    public void inscribirMateria(String libreta, Materia materia) {
         NodoDict nodo = getEstudiante(libreta);
         nodo.materias.add(materia);
     }
 
-    public void eliminarMateria(String libreta, String materia) {
+    public void eliminarMateria(String libreta, Materia materia) {
         NodoDict nodo = getEstudiante(libreta);
         nodo.materias.remove(materia);
     }
